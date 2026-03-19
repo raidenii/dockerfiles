@@ -1,0 +1,58 @@
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 10 * * *"
+
+name: Check, build and push Docker images
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        run: |
+          JSON=$(cat metadata.json | jq -c '.')
+          echo "matrix=${JSON}" >> $GITHUB_OUTPUT
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: ${{ fromJson(needs.setup.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Check upstream version
+        id: check
+        run: |
+          latest_release=$(git ls-remote --tags --refs --sort='v:refname' ${{ matrix.app.upstream }} | tail -1 | awk -F/ '{print $NF}')
+          docker_tag=$(curl -sSL --retry 5 https://hub.docker.com/v2/repositories/${{ matrix.app.docker_image }}/tags | jq -r '.results[] | select(.name != "latest") | .name' | head -n 1)
+          if [[ $latest_release != $docker_tag ]] && [[ $(printf '%s\n' $latest_release $docker_tag | sort -V | head -n1) == $docker_tag ]]; then 
+            echo "version=$latest_release" >> $GITHUB_OUTPUT
+          else
+            echo "version=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build latest release
+        if: steps.check.outputs.version != ''
+        run: |
+          docker_platforms="linux/amd64,linux/arm64"
+          docker_image="${{ matrix.app.docker_image }}"
+          docker_tag=${{ steps.check.outputs.version }}
+          dockerfile="${{ matrix.app.dockerfile_dir }}/Dockerfile"
+
+          docker buildx build --platform $docker_platforms \
+          --output "type=image,push=true" \
+          --tag "$docker_image:$docker_tag" \
+          --tag "$docker_image:latest" \
+          --build-arg TAG=$docker_tag \
+          --file "$dockerfile" .

@@ -1,0 +1,12 @@
+[
+    {
+        "upstream": "https://github.com/v2fly/v2ray-core.git",
+        "docker_image": "r2dh/v2fly-core",
+        "dockerfile_dir": "v2fly"
+    },
+    {
+        "upstream": "https://repo.or.cz/dnstt.git",
+        "docker_image": "r2dh/dnstt",
+        "dockerfile_dir": "dnstt"
+    }
+]
