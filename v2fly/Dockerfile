@@ -28,7 +28,7 @@ ARG TAG
 LABEL maintainer="r2dh" \
       org.opencontainers.image.title="V2Fly Docker" \
       org.opencontainers.image.authors="r2dh" \
-      org.opencontainers.image.url="https://github.com/raidenii/v2fly-docker" \
+      org.opencontainers.image.url="https://github.com/raidenii/dockerfiles" \
       org.opencontainers.image.source="https://github.com/v2fly/v2ray-core" \
       org.opencontainers.image.description="A Docker image for V2Fly" \
       org.opencontainers.image.version=$TAG

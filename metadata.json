@@ -8,5 +8,10 @@
         "upstream": "https://repo.or.cz/dnstt.git",
         "docker_image": "r2dh/dnstt",
         "dockerfile_dir": "dnstt"
+    },
+    {
+        "upstream": "https://github.com/rakshasa/rtorrent.git",
+        "docker_image": "r2dh/rtorrent",
+        "dockerfile_dir": "rtorrent"
     }
 ]

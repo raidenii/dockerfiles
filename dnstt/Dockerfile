@@ -28,7 +28,7 @@ ARG TAG
 LABEL maintainer="r2dh" \
       org.opencontainers.image.title="dnstt Docker" \
       org.opencontainers.image.authors="r2dh" \
-      org.opencontainers.image.url="https://github.com/raidenii/dnstt-docker" \
+      org.opencontainers.image.url="https://github.com/raidenii/dockerfiles" \
       org.opencontainers.image.source="https://repo.or.cz/dnstt.git" \
       org.opencontainers.image.description="A Docker image for dnstt" \
       org.opencontainers.image.version=$TAG
