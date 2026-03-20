@@ -35,8 +35,10 @@ jobs:
         id: check
         run: |
           latest_release=$(git ls-remote --tags --refs --sort='v:refname' ${{ matrix.app.upstream }} | tail -1 | awk -F/ '{print $NF}')
-          docker_tag=$(curl -sSL --retry 5 https://hub.docker.com/v2/repositories/${{ matrix.app.docker_image }}/tags | jq -r '.results[] | select(.name != "latest") | .name' | head -n 1)
-          if [[ $latest_release != $docker_tag ]] && [[ $(printf '%s\n' $latest_release $docker_tag | sort -V | head -n1) == $docker_tag ]]; then 
+          docker_tag=$(curl -sSL --retry 5 https://hub.docker.com/v2/repositories/${{ matrix.app.docker_image }}/tags | jq -r '.results[]? | select(.name != "latest") | .name' | head -n 1)
+          if [[ -z "$docker_tag" ]]; then
+            echo "version=$latest_release" >> $GITHUB_OUTPUT
+          elif [[ $latest_release != $docker_tag ]] && [[ $(printf '%s\n' $latest_release $docker_tag | sort -V | head -n1) == $docker_tag ]]; then 
             echo "version=$latest_release" >> $GITHUB_OUTPUT
           else
             echo "version=" >> $GITHUB_OUTPUT
