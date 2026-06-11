@@ -36,7 +36,7 @@ LABEL maintainer="r2dh" \
       org.opencontainers.image.title="rtorrent docker" \
       org.opencontainers.image.authors="r2dh" \
       org.opencontainers.image.url="https://github.com/raidenii/dockerfiles" \
-      org.opencontainers.image.source="https://github.com/v2fly/v2ray-core" \
+      org.opencontainers.image.source="https://github.com/raidenii/dockerfiles" \
       org.opencontainers.image.description="A Docker image for rTorrent" \
       org.opencontainers.image.version=$TAG
 
